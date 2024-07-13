@@ -3,8 +3,9 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Interface/ICrimeDAOToken.sol";
 import "hardhat/console.sol";
-contract CrimeDAOToken is ERC20, Ownable {
+contract CrimeDAOToken is ERC20, Ownable , ICrimeDAOToken{
     uint256 public constant TOKEN_DECIMALS = 18;
     uint256 public constant TOKEN_PRICE_WEI = 0.01 ether;
     uint256 private constant TOKEN_UNIT = 10 ** TOKEN_DECIMALS; // ** Optimized: Precompute this once **
@@ -14,10 +15,6 @@ contract CrimeDAOToken is ERC20, Ownable {
     error ContractBalanceInsufficient();
     error InsufficientEthProvided();
     error ContractDoesNotAcceptEth();
-
-    event TokenMinted(address indexed to, uint256 tokenAmount, uint256 ethAmount);
-    event TokensBurned(address indexed from, uint256 tokenAmount, uint256 ethAmount);
-    event Withdrawal(address indexed to, uint256 ethAmount);
 
     constructor() ERC20("CrimeDAOToken", "CRDAO") Ownable(msg.sender) {
         _mint(msg.sender, 100 * TOKEN_UNIT); // ** Optimized: Use precomputed value **
