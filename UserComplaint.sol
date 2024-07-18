@@ -54,6 +54,26 @@ contract UserComplaint is Ownable, IUserComplaint {
     }
 }
 
+    function deleteFile(uint256 complaintId, string memory _uri) external override {
+        require(complaints[complaintId].userAddress == msg.sender, "Not authorized");
+
+        Complaint storage complaint = complaints[complaintId];
+
+        bool found = false;
+        for (uint256 i = 0; i < complaint.uri.length; i++) {
+            if (keccak256(abi.encodePacked(complaint.uri[i])) == keccak256(abi.encodePacked(_uri))) {
+                found = true;
+                // Remove the ipfsHash by replacing it with the last element and then popping the array
+                delete complaint.uri[i];
+                emit FileDeleted(complaintId, _uri);
+                break;
+            }
+        }
+
+        require(found, "IPFS hash not found in complaint");
+    }
+
+        
 
     function getComplaint(uint256 complaintId) external view override returns (Complaint memory) {
         require(complaints[complaintId].userAddress == msg.sender || owner() == msg.sender, "Not authorized");
